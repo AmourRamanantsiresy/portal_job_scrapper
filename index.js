@@ -35,7 +35,7 @@ app.get("/:id", (req, response) => {
     }
 })
 
-app.listen(process.env.PORT || 5000, () => {
+app.listen(80, () => {
     console.log("Server is started")
 })
 
