@@ -35,7 +35,7 @@ app.get("/:id", (req, response) => {
     }
 })
 
-app.listen(80, () => {
+app.listen(8080, () => {
     console.log("Server is started")
 })
 
