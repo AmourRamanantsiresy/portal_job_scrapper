@@ -1,6 +1,6 @@
 const express = require("express");
 const axios = require('axios');
-const cheerio = require('cheerio');
+const { load } = require('cheerio');
 const cors = require("cors")
 const app = express();
 
@@ -13,21 +13,11 @@ app.get("/:id", (req, response) => {
         const urls = `https://www.portaljob-madagascar.com/emploi/liste${id === 1 ? "" : "/page/" + id}`;
         axios.get(urls)
             .then(res => {
-                const $ = cheerio.load(res.data);
-                const data = [getLastPage($)];
-                $(".item_annonce").each((k, e) => {
-                    const temp = [];
-                    $(e).children().each((k2, e1) => {
-                        if (k2 != 0) {
-                            $(e1).each((k, e2) => {
-                                $(e2).children().each((k, e3) => {
-                                    temp.push($(e3).html().trim().replaceAll("\n", "").replaceAll('"', "'"));
-                                })
-                            })
-                        }
-                    })
-                    data.push(temp);
-                });
+                const $ = load(res.data);
+                const data = {
+                    "last_page": getLastPage($),
+                    "information": get_Information($, ".item_annonce")
+                };
                 response.status(200).json(data);
             });
     } catch {
@@ -44,3 +34,34 @@ function getLastPage($) {
     const result = $(".pagination>ul>li");
     return parseInt($($(result[result.length - 1]).children()).html());
 }
+
+//get all information by PortalJob
+function get_Information($, selector) {
+    let temp = []
+    $(selector).each((k, e) => {
+        let html = load($(e).html())
+        const data = {
+            "title": get_Title(html),
+            "href": get_Link(html),
+            "company": get_Company(html),
+            "contract": get_Contract(html),
+            "description": get_Description(html),
+            "limit_date": get_Date(html)
+        }
+        temp.push(data);
+    });
+    return temp;
+}
+
+// getters
+const get_Link = $ => $(".contenu_annonce>h3>a").attr().href;
+
+const get_Title = $ => $(".contenu_annonce>h3>a>strong").html().trim();
+
+const get_Company = $ => $(".contenu_annonce>h4").html().trim();
+
+const get_Contract = $ => $(".contenu_annonce>h5").html().trim();
+
+const get_Description = $ => $(".contenu_annonce>.description").html().trim();
+
+const get_Date = $ => $($(".contenu_annonce>div>b").children()).html();
