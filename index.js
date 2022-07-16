@@ -10,7 +10,7 @@ app.use(cors());
 app.get("/:id", (req, response) => {
     try {
         const id = parseInt(req.params.id)
-        const urls = `https://www.portaljob-madagascar.com/emploi/liste${id === 1 ? "" : "/page/" + id}`;
+        const urls = `https://www.portaljob-madagascar.com/emploi/liste/secteur/informatique-web/page/${id}`;
         axios.get(urls)
             .then(res => {
                 const $ = load(res.data);
