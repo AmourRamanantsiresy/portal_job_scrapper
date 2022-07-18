@@ -46,7 +46,9 @@ function get_Information($, selector) {
             "company": get_Company(html),
             "contract": get_Contract(html),
             "description": get_Description(html),
-            "limit_date": get_Date(html)
+            "limit_date": get_Date(html),
+            "flag": get_Flag(html),
+            "logo_company": get_LogoCompany(html) || null
         }
         temp.push(data);
     });
@@ -54,7 +56,7 @@ function get_Information($, selector) {
 }
 
 // getters
-const get_Link = $ => $(".contenu_annonce>h3>a").attr().href;
+const get_Link = $ => $(".contenu_annonce>h3>a").attr('href');
 
 const get_Title = $ => $(".contenu_annonce>h3>a>strong").html().trim();
 
@@ -65,3 +67,14 @@ const get_Contract = $ => $(".contenu_annonce>h5").html().trim();
 const get_Description = $ => $(".contenu_annonce>.description").html().trim();
 
 const get_Date = $ => $($(".contenu_annonce>div>b").children()).html();
+
+const get_Flag = $ => $(".date_annonce .urgent_flag").html();
+
+const get_LogoCompany = $ => $(".date_annonce>div>img").attr('src');
+
+
+
+// Initialize server
+app.listen(5000, () => {
+    console.log("Running on port 5000.");
+});
